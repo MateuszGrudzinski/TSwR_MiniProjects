@@ -2,7 +2,7 @@ import numpy as np
 
 
 class ManiuplatorModel:
-    def __init__(self, Tp):
+    def __init__(self, Tp, m3 = 0.1, r3 = 0.05):
         self.Tp = Tp
         self.l1 = 0.5
         self.r1 = 0.04
@@ -12,8 +12,8 @@ class ManiuplatorModel:
         self.m2 = 2.4
         self.I_1 = 1 / 12 * self.m1 * (3 * self.r1 ** 2 + self.l1 ** 2)
         self.I_2 = 1 / 12 * self.m2 * (3 * self.r2 ** 2 + self.l2 ** 2)
-        self.m3 = 0.3  # Diffrence of 0.1kg with URDF IF 0.3 here
-        self.r3 = 0.05
+        self.m3 = m3  # Diffrence of 0.1kg with URDF IF 0.3 here
+        self.r3 = r3
         self.I_3 = 2. / 5 * self.m3 * self.r3 ** 2
 
         self.d1 = self.l1/2
@@ -43,3 +43,10 @@ class ManiuplatorModel:
         C = np.array([[-self.eq3 * np.sin(q2) * q2_dot, -self.eq3 * np.sin(q2) * (q1_dot + q2_dot)],
                       [self.eq3 * np.sin(q2) * q1_dot, 0]])
         return C
+
+    def x_dot(self, x, u):
+        invM = np.linalg.inv(self.M(x))
+        zeros = np.zeros((2, 2), dtype=np.float32)
+        A = np.concatenate([np.concatenate([zeros, np.eye(2)], 1), np.concatenate([zeros, -invM @ self.C(x)], 1)], 0)
+        b = np.concatenate([zeros, invM], 0)
+        return A @ x[:, np.newaxis] + b @ u
