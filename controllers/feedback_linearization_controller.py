@@ -8,8 +8,10 @@ class FeedbackLinearizationController(Controller):
         self.model = ManiuplatorModel(Tp)
 
     def calculate_control(self, x, q_r, q_r_dot, q_r_ddot):
-        """
-        Please implement the feedback linearization using self.model (which you have to implement also),
-        robot state x and desired control v.
-        """
-        return NotImplementedError()
+        kp = 30.5
+        kd = 20
+        q = x[:2]
+        q_dot = x[2:]
+        v = q_r_ddot + kd*(q_r_dot-q_dot) + kp*(q_r-q)
+        v_des = self.model.M(x)@v + self.model.C(x)@q_r_dot
+        return v_des
