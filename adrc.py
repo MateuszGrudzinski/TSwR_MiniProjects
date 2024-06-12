@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy import pi
 from scipy.integrate import odeint
+from models.manipulator_model import ManiuplatorModel
 
 from controllers.adrc_controller import ADRController
 
@@ -17,18 +18,21 @@ end = 5
 traj_gen = Sinusoidal(np.array([0., 1.]), np.array([2., 2.]), np.array([0., 0.]))
 # traj_gen = Poly3(np.array([0., 0.]), np.array([pi/4, pi/6]), end)
 
-b_est_1 = None
-b_est_2 = None
-kp_est_1 = None
-kp_est_2 = None
-kd_est_1 = None
-kd_est_2 = None
-p1 = None
-p2 = None
-
+kp_est_1 =35
+kp_est_2 =35
+kd_est_1 =25
+kd_est_2 =25
+p1 = 70
+p2 = 70
 q0, qdot0, _ = traj_gen.generate(0.)
 q1_0 = np.array([q0[0], qdot0[0]])
 q2_0 = np.array([q0[1], qdot0[1]])
+
+m1 = ManiuplatorModel(Tp,m3=0.1,r3=0.05)
+
+b_est_1 = np.linalg.inv(m1.M((q0[0],q0[1],qdot0[0],qdot0[1])))[0][0] # initial estimate
+b_est_2 = np.linalg.inv(m1.M((q0[0],q0[1],qdot0[0],qdot0[1])))[1][1]
+
 controller = ADRController(Tp, params=[[b_est_1, kp_est_1, kd_est_1, p1, q1_0],
                                        [b_est_2, kp_est_2, kd_est_2, p2, q2_0]])
 

@@ -11,7 +11,7 @@ class MMAController(Controller):
         m2 = ManiuplatorModel(Tp,m3=0.01,r3=0.01)
         # III: m3=1.0,  r3=0.3
         m3 = ManiuplatorModel(Tp,m3=1.0,r3=0.3)
-        self.models = [m2, m1, m3]
+        self.models = [m1, m2, m3]
         self.Tp = Tp
         self.prev_x = np.zeros(4)
         self.prev_u = np.zeros(2)
@@ -30,8 +30,8 @@ class MMAController(Controller):
     def calculate_control(self, x, q_r, q_r_dot, q_r_ddot):
         print("Wybrano Model: ", self.i)
         self.i = self.choose_model(x)
-        kp = 30
-        kd = 20
+        kp = 8
+        kd = 5
         q = x[:2]
         q_dot = x[2:]
         v = q_r_ddot + kd * (q_r_dot - q_dot) + kp * (q_r - q)

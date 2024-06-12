@@ -30,7 +30,7 @@ Here you have some trajectory generators. You can use them to check your impleme
 traj_gen = Poly3(np.array([0., 0.]), np.array([pi/2, pi/6]), end)
 
 
-Q, Q_d, u, T = simulate("PYBULLET", traj_gen, controller, Tp, end)
+Q, Q_d, u, T = simulate("PYBULLET", traj_gen, controller, Tp, end, multimodel=True)
 
 plt.subplot(221)
 plt.plot(T, Q[:, 0], 'r', label="q_1")
